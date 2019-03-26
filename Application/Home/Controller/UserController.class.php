@@ -3,6 +3,7 @@
 namespace Home\Controller;
 
 
+use http\Client\Curl\User;
 use Think\Controller;
 use Think\Exception;
 
@@ -19,7 +20,7 @@ class UserController extends Controller
 
     public function create()
     {
-        return $this->display();
+        $this->display();
     }
 
     //新增用户
@@ -51,14 +52,45 @@ class UserController extends Controller
                 //抛出PDO错误
                 try {
                     $data = $User->fetchSql(false)->add();
-                }
-                catch (Exception $exception){
-                    $this->ajaxReturn(array('error'=>$exception));
+                } catch (Exception $exception) {
+                    $this->ajaxReturn(array('error' => $exception));
                 }
                 //成功并返回用户信息
                 $result['success'] = $User->find($data);
                 $this->ajaxReturn($result);
             }
+        }
+    }
+
+    //编辑用户页面
+    public function edit()
+    {
+        $user = D('Users')->find(I('get.id'));
+
+        if ($user !== false && !empty($user)) {
+            $this->assign('user',$user);
+            $this->display();
+        } else {
+            dump('用户不存在');
+        }
+    }
+
+    //编辑用户
+    public function update()
+    {
+        $User = D('Users');
+        if (IS_POST && !IS_AJAX) {
+            if (!$User->create()) {
+                dump($User->getError());
+            }
+
+            $result = $User->save();
+            if ($result!==false){
+                dump('success'.$result);
+            }
+
+            dump($User->getDbError());
+            dump($User->getLastSql());
         }
     }
 }
