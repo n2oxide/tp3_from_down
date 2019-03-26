@@ -22,8 +22,10 @@ class UserController extends Controller
         return $this->display();
     }
 
+    //新增用户
     public function save()
     {
+        //表单提交途径
         if (IS_POST && !IS_AJAX) {
             $User = D('Users');
             $data['id'] = I('post.id');
@@ -34,6 +36,7 @@ class UserController extends Controller
                 dump($User->fetchSql(false)->add());
             }
         }
+        //AJAX提交途径
         if (IS_POST && IS_AJAX) {
             $User = D('Users');
             $data['id'] = I('request.id');
@@ -41,12 +44,14 @@ class UserController extends Controller
             if (!$User->create($data)) {
                 $this->ajaxReturn(array('error' => $User->getError()));
             } else {
+                //抛出PDO错误
                 try {
                     $data = $User->fetchSql(false)->add();
                 }
                 catch (Exception $exception){
                     $this->ajaxReturn(array('error'=>$exception));
                 }
+                //成功并返回用户信息
                 $result['success'] = $User->find($data);
                 $this->ajaxReturn($result);
             }
