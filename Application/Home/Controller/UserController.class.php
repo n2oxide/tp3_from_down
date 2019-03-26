@@ -87,8 +87,9 @@ class UserController extends Controller
 
             $other['age'] = array('gt',1);
             //重写主键条件，否则在附加条件采取'='之外的条件时，
-            //会产生Duplicate entry '0' for key 'PRIMARY'错误
-            //sql为
+            //会产生1062:Duplicate entry '2' for key 'PRIMARY'
+            //[ SQL语句 ] : UPDATE `users` SET `id`='2',`name`='sec ladys' WHERE `age` > 1
+            //这应该是mysql本身的错误，若全是=条件，会自动将set id=2编译为 where id =2
             $other['id'] = array('eq',2);
 
             $result = $User->where($other)->field(array('age','name'))->save();
