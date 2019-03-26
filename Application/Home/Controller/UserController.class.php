@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 
 use Think\Controller;
+use Think\Exception;
 
 class UserController extends Controller
 {
@@ -23,7 +24,7 @@ class UserController extends Controller
 
     public function save()
     {
-        if (IS_POST) {
+        if (IS_POST && !IS_AJAX) {
             $User = D('Users');
             $data['id'] = I('post.id');
             $data['name'] = I('post.name');
@@ -33,14 +34,20 @@ class UserController extends Controller
                 dump($User->fetchSql(false)->add());
             }
         }
-        if (IS_AJAX) {
+        if (IS_POST && IS_AJAX) {
             $User = D('Users');
             $data['id'] = I('request.id');
             $data['name'] = I('request.name');
             if (!$User->create($data)) {
-                $this->ajaxReturn($User->getError());
+                $this->ajaxReturn(array('error' => $User->getError()));
             } else {
-                $result['result'] = $User->fetchSql(false)->add();
+                try {
+                    $data = $User->fetchSql(false)->add();
+                }
+                catch (Exception $exception){
+                    $this->ajaxReturn(array('error'=>$exception));
+                }
+                $result['success'] = $User->find($data);
                 $this->ajaxReturn($result);
             }
         }

@@ -2,7 +2,7 @@
     <input type="text" name="id" id="id"/>
     <input type="text" name="name" id="name"/>
     <button type="submit">↑↑↑</button>
-    <input type="button" onclick="ajax_submit()"value="ajax↑↑↑">
+    <input type="button" onclick="ajax_submit()" value="ajax↑↑↑">
 </form>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
 <script>
@@ -10,11 +10,16 @@
         $.post(
             "/index.php/Home/user/save",
             {
-                id:$('#id').val(),
-                name:$('#name').val()
+                id: $('#id').val(),
+                name: $('#name').val()
             },
             function (data) {
-                console.log(data);
+                if (data.key === 'success') {
+                    console.info(data);
+                }
+                else if(data.key === 'error'){
+                    console.error(data);
+                }
             }
         );
     }
