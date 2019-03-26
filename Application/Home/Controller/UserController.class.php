@@ -30,10 +30,13 @@ class UserController extends Controller
             $User = D('Users');
             $data['id'] = I('post.id');
             $data['name'] = I('post.name');
+            //自动验证，完成
             if (!$User->create($data)) {
                 exit($User->getError());
             } else {
-                dump($User->fetchSql(false)->add());
+                $id = $User->fetchSql(false)->add();
+                $user = $User->find($id);
+                dump($user);
             }
         }
         //AJAX提交途径
@@ -41,6 +44,7 @@ class UserController extends Controller
             $User = D('Users');
             $data['id'] = I('request.id');
             $data['name'] = I('request.name');
+            //自动验证，完成
             if (!$User->create($data)) {
                 $this->ajaxReturn(array('error' => $User->getError()));
             } else {
