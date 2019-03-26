@@ -1552,5 +1552,8 @@ function in_array_case($value,$array){
 
 //name_add_s
 function name_add_s($name){
-    return $name.'s';
+    $add_str = 's';
+    if (substr($name,-1,1) == 's')
+        $add_str = '';
+    return $name.$add_str;
 }

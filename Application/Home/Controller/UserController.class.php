@@ -84,7 +84,14 @@ class UserController extends Controller
                 dump($User->getError());
             }
 
-            $result = $User->save();
+
+            $other['age'] = array('gt',1);
+            //重写主键条件，否则在附加条件采取'='之外的条件时，
+            //会产生Duplicate entry '0' for key 'PRIMARY'错误
+            //sql为
+            $other['id'] = array('eq',2);
+
+            $result = $User->where($other)->field(array('age','name'))->save();
             if ($result!==false){
                 dump('success'.$result);
             }
