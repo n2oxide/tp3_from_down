@@ -12,12 +12,21 @@ class UserController extends Controller
     public function read()
     {
         $User = D('Users');
-        $arg['id'] = array('GT', I('get.id'));
+        $arg['id'] = array('EQ', I('get.id'));
         $user = $User->where($arg)->find();
 
         dump($user);
     }
 
+    public function index()
+    {
+        $User = D('Users');
+        $users = $User->select();
+        $this->assign('users', $users);
+        $this->display();
+    }
+
+    //新增用户页面
     public function create()
     {
         $this->display();
@@ -68,7 +77,7 @@ class UserController extends Controller
         $user = D('Users')->find(I('get.id'));
 
         if ($user !== false && !empty($user)) {
-            $this->assign('user',$user);
+            $this->assign('user', $user);
             $this->display();
         } else {
             dump('用户不存在');
@@ -85,20 +94,45 @@ class UserController extends Controller
             }
 
 
-            $other['age'] = array('gt',1);
+            $other['age'] = array('gt', 1);
             //重写主键条件，否则在附加条件采取'='之外的条件时，
             //会产生1062:Duplicate entry '2' for key 'PRIMARY'
             //[ SQL语句 ] : UPDATE `users` SET `id`='2',`name`='sec ladys' WHERE `age` > 1
             //这应该是mysql本身的错误，若全是=条件，会自动将set id=2编译为 where id =2
-            $other['id'] = array('eq',2);
+            $other['id'] = array('eq', 2);
 
-            $result = $User->where($other)->field(array('age','name'))->save();
-            if ($result!==false){
-                dump('success'.$result);
+            $result = $User->where($other)->field(array('age', 'name'))->save();
+            if ($result !== false) {
+                dump('success' . $result);
             }
 
             dump($User->getDbError());
             dump($User->getLastSql());
+        }
+    }
+
+    public function delete()
+    {
+        $User = D('Users');
+        $data['id'] = I('get.id');
+
+        dump($data);
+        if (!$User->create($data)) {
+            dump($User->getError());
+        }
+        //以下用法会取表第一行数据，在数据读取中，必须用where显式指定条件
+        //$user = $User->find();
+        $user = $User->where($data)->find();
+        dump($user);
+        if ($user === false) {
+            dump($User->getDbError());
+            dump($User->getLastSql());
+        }
+        if (empty($user)) {
+            dump('无此用户');
+        }
+        if ($user !== false && !empty($user)) {
+            dump($User->fetchSql(true)->delete());
         }
     }
 }

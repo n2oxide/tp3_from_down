@@ -1,0 +1,17 @@
+<layout name="layout/layout"/>
+<table>
+    <tr>
+        <th>编号</th>
+        <th>名字</th>
+        <th>编辑</th>
+        <th>删除</th>
+    </tr>
+    <volist name="users" id="user">
+        <tr>
+            <td>{$user.id}</td>
+            <td>{$user.name}</td>
+            <td><button>编辑</button></td>
+            <td><button><a href="/index.php/Home/User/{$user.id}/delete">删除</a></button></td>
+        </tr>
+    </volist>
+</table>
